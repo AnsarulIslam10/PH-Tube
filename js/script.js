@@ -27,37 +27,66 @@ const displayCategories = (categories) => {
   categories.forEach((item) => {
     console.log(item);
     // create a button
-    const button = document.createElement("button");
-    button.classList = "btn";
-    button.innerText = item.category;
+    const buttonContainer = document.createElement("div");
+    buttonContainer.innerHTML = 
+    `
+    <button onclick="loadCategoryVideos(${item.category_id})" class="btn">
+    ${item.category}
+    </button>
+    
+    `
 
-    categoryConteiner.append(button);
+
+    categoryConteiner.append(buttonContainer);
   });
 };
 
+const loadCategoryVideos = (id) =>{
+    fetch(`https://openapi.programming-hero.com/api/phero-tube/category/${id}`)
+    .then((res) => res.json())
+    .then((data) => displayVideos(data.category))
+    .catch((error) => console.log(error));
+}
 // demo card
-const cardDemo = {
-  category_id: "1003",
-  video_id: "aaak",
-  thumbnail: "https://i.ibb.co/ZNggzdm/cake.jpg",
-  title: "Beyond The Pale",
-  authors: [
-    {
-      profile_picture: "https://i.ibb.co/MZ2vbXR/jimm.jpg",
-      profile_name: "Jim Gaffigan",
-      verified: false,
-    },
-  ],
-  others: {
-    views: "2.6K",
-    posted_date: "15400",
-  },
-  description:
-    "'Beyond The Pale' by Jim Gaffigan, with 2.6K views, is a comedic gem that explores everyday observations and family life with a light-hearted and witty approach. Jim's humor is accessible and delightful, making this show perfect for anyone who enjoys clean, observational comedy.",
-};
+// const cardDemo = {
+//   category_id: "1003",
+//   video_id: "aaak",
+//   thumbnail: "https://i.ibb.co/ZNggzdm/cake.jpg",
+//   title: "Beyond The Pale",
+//   authors: [
+//     {
+//       profile_picture: "https://i.ibb.co/MZ2vbXR/jimm.jpg",
+//       profile_name: "Jim Gaffigan",
+//       verified: false,
+//     },
+//   ],
+//   others: {
+//     views: "2.6K",
+//     posted_date: "15400",
+//   },
+//   description:
+//     "'Beyond The Pale' by Jim Gaffigan, with 2.6K views, is a comedic gem that explores everyday observations and family life with a light-hearted and witty approach. Jim's humor is accessible and delightful, making this show perfect for anyone who enjoys clean, observational comedy.",
+// };
 
 const displayVideos = (videos) => {
   const videoConteiner = document.getElementById("videos");
+  videoConteiner.innerHTML = "";
+
+  if (videos.length == 0) {
+    videoConteiner.classList.remove('grid')
+    videoConteiner.innerHTML = `
+    
+    <div class="w-h-[300px] flex flex-col gap-5 justify-center items-center">
+        <img src="img/icon.png" />
+        <h2 class="text-center text-xl font-bold">No Content Here in this Category</h2>
+    </div>
+    
+    `;
+    return;
+  }else{
+    videoConteiner.classList.add('grid')
+  }
+
   videos.forEach((video) => {
     console.log(video);
     const card = document.createElement("div");
